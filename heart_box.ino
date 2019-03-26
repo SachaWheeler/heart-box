@@ -10,6 +10,8 @@
  pin 10 is connected to LOAD 
  */
 LedControl display=LedControl(12, 11, 10, 1);
+const int buttonPin = 5; 
+int buttonStage = 0;
 
 const byte BEATING_HEART[][8] = {
 {
@@ -217,6 +219,9 @@ unsigned long delaytime=300;
 
 
 void setup() {
+  Serial.begin(9600); 
+  pinMode(buttonPin, INPUT);
+    
   display.clearDisplay(0);
   display.shutdown(0, false);
   display.setIntensity(0, 10);
@@ -233,6 +238,21 @@ void displayImage(const byte* image) {
 int i = 0;
 
 void loop() {
+  // read the state of the pushbutton value:
+  int  buttonState = digitalRead(buttonPin);
+
+  // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
+  if (buttonState == HIGH) {
+    // turn LED on:
+    //digitalWrite(ledPin, HIGH);
+    Serial.print("Pressed\n");      
+  } else {
+    // turn LED off:
+    //digitalWrite(ledPin, LOW);
+    Serial.print("Not pressed\n");      
+  }
+
+  // animate
   displayImage(BEATING_HEART[i]);
   if (++i >= BEATING_HEART_LEN ) {
     i = 0;
