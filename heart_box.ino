@@ -235,27 +235,53 @@ void displayImage(const byte* image) {
   }
 }
 
-int i = 0;
+int animFrame = 0;
+
+unsigned long animTime = 0;   // the last time we processed doBlink()
+unsigned long animDelay = 333;  // milliseconds between animation calls
+unsigned long millisecs = 0;    // a millis() time-slice
+
+int firsttime = 1;
+unsigned long startTime;
+unsigned long pressTime;
 
 void loop() {
+  millisecs = millis();
   // read the state of the pushbutton value:
   int  buttonState = digitalRead(buttonPin);
 
   // check if the pushbutton is pressed. If it is, the buttonState is HIGH:
-  if (buttonState == HIGH) {
-    // turn LED on:
-    //digitalWrite(ledPin, HIGH);
-    Serial.print("Pressed\n");      
+  if (buttonState == LOW) {
+    if(firsttime == 1){
+      startTime = millisecs;
+      firsttime=0;
+     }
+     pressTime = millisecs - startTime;
+     if(pressTime >= 1){
+      Serial.print("Time: ");
+      Serial.print(pressTime);
+      Serial.print(" milliseconds ");
+      Serial.print(int(pressTime/1000));
+      Serial.println(" seconds");
+     }
+     if(pressTime >3000){
+      Serial.println(">3 seconds");
+     }    
+    //Serial.print("Pressed\n");      
   } else {
-    // turn LED off:
-    //digitalWrite(ledPin, LOW);
-    Serial.print("Not pressed\n");      
+    if(firsttime == 0){
+      firsttime = 1;
+      Serial.println("Time: 0 milleseconds; 0 seconds");
+    }
   }
 
-  // animate
-  displayImage(BEATING_HEART[i]);
-  if (++i >= BEATING_HEART_LEN ) {
-    i = 0;
+  if ( animTime + animDelay < millisecs ) {
+    animTime = millisecs;
+
+    // animate
+    displayImage(BEATING_HEART[animFrame]);
+    if (++animFrame >= BEATING_HEART_LEN ) {
+      animFrame = 0;
+    }
   }
-  delay(333);
 }
