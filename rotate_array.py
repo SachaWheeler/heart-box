@@ -1,3 +1,4 @@
+import pprint
 
 IMAGES = [
 [
@@ -814,10 +815,25 @@ IMAGES = [
 
 x=0
 for image in IMAGES:
+    initial = []
+    output = []
     x += 1
-    if x > 5:
-        break
-    print(image)
+    # if x > 5: break
+    # print(image)
     for row in image:
-        print(row)
+        # print(row)
+        initial.append(list(row))
+    # print(output)
+    rotated_output = zip(*initial[::-1])
+    rotated_output = [list(row) for row in rotated_output]
+
+    # print(rotated_output)
+    trimmed_output = rotated_output[1::]  # remove the row of Bs
+    [row.insert(0, "B") for row in trimmed_output]
+    # pprint.pprint(trimmed_output)
+    output = [''.join(row) for row in trimmed_output]
+    # pprint.pprint(output)
+    print("}, {")
+    for row in output:
+        print("  %s," % row)
 
