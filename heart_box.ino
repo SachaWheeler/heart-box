@@ -3,10 +3,10 @@
 #include "binary.h";
 
 /*
- Now we need a LedControl to work with.
- pin 12 is connected to the DataIn
- pin 11 is connected to the CLK
- pin 10 is connected to LOAD
+  Now we need a LedControl to work with.
+  pin 12 is connected to the DataIn
+  pin 11 is connected to the CLK
+  pin 10 is connected to LOAD
  */
 LedControl display = LedControl(12, 11, 10, 1);
 const int buttonPin = 5;
@@ -215,6 +215,66 @@ const int EXPLOSION_LEN = sizeof(EXPLOSION) / 8;
 const byte MESSAGE[][8] = {
   {
     B00000000,
+    B00001000,
+    B00101010,
+    B00011100,
+    B01110111,
+    B00011100,
+    B00101010,
+    B00001000
+  }, {
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+  }, {
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00001110,
+  }, {
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00001110,
+    B00011110,
+  }, {
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00001110,
+    B00011110,
+    B11110000,
+    B11110000,
+  }, {
+    B00000000,
+    B00000000,
+    B00000000,
+    B00001110,
+    B00011110,
+    B11110000,
+    B11110000,
+    B00011110,
+  }, {
+    B00000000,
+    B00000000,
+    B00001110,
+    B00011110,
+    B11110000,
+    B11110000,
+    B00011110,
+    B00001110,
+  }, {
+    B00000000,
     B00001110,
     B00011110,
     B11110000,
@@ -1022,12 +1082,75 @@ const byte MESSAGE[][8] = {
     B00000000,
     B11111110,
     B11111110,
+    B00000000,
+  }, {
+    B10000000,
+    B11111000,
+    B11111000,
+    B00000000,
+    B11111110,
+    B11111110,
+    B00000000,
+    B00000000,
+  }, {
+    B11111000,
+    B11111000,
+    B00000000,
+    B11111110,
+    B11111110,
+    B00000000,
+    B00000000,
+    B00000000,
+  }, {
+    B11111000,
+    B00000000,
+    B11111110,
+    B11111110,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+  }, {
+    B00000000,
+    B11111110,
+    B11111110,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+  }, {
+    B11111110,
+    B11111110,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+  }, {
+    B11111110,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+  }, {
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
+    B00000000,
     B00000000,
   }
 };
 const int MESSAGE_LEN = sizeof(MESSAGE) / 8;
 
-int ANIMATION_LEN = 0;
+int ANIMATION_LEN = BEATING_HEART_LEN; // starting position
 
 void setup() {
   Serial.begin(9600);
@@ -1060,7 +1183,7 @@ unsigned long pressTime;
 
 void loop() {
   millisecs = millis();
-  
+
   // read the state of the pushbutton value:
   int  buttonState = digitalRead(buttonPin);
 
@@ -1070,14 +1193,14 @@ void loop() {
       startTime = millisecs;
       firsttime = 0;
     }
-    
+
     pressTime = millisecs - startTime;
     if (pressTime > 3000) {
       // 3 sec hold
       hold_type = 3;
       ANIMATION_LEN = MESSAGE_LEN;
       Serial.println("message");
-      
+
     } else if (pressTime > 2000) {
       // 2 sec hold
       ANIMATION_LEN = BEATING_HEART_LEN;
@@ -1098,7 +1221,7 @@ void loop() {
       hold_type = 0;
     }
     animFrame = 0;
-    
+
   } else {
     if (firsttime == 0) {
       firsttime = 1;
@@ -1111,13 +1234,13 @@ void loop() {
     // animate
     if (hold_type == 0) {
       displayImage(BEATING_HEART[animFrame]);
-      
+
     } else if (hold_type == 1) {
       displayImage(EXPLOSION[animFrame]);
-      
+
     } else if (hold_type == 2) {
       displayImage(BEATING_HEART[animFrame]);
-      
+
     } else if (hold_type == 3) {
       displayImage(MESSAGE[animFrame]);
     }
