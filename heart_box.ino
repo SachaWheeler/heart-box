@@ -1042,16 +1042,14 @@ void setup() {
 
 void displayImage(const byte* image) {
   for (int i = 0; i < 8; i++) {
-    for (int j = 0; j < 8; j++) {
-      display.setLed(0, i, j, bitRead(image[i], 7 - j));
-    }
+    display.setRow(0, i, image[i]);
   }
 }
 
 // animation variables
 int animFrame = 0;
 unsigned long animTime = 0;     // the last time we animated
-unsigned long animDelay = 300;  // milliseconds between animation calls
+unsigned long animDelay = 250;  // milliseconds between animation calls
 unsigned long millisecs = 0;    // a millis() time-slice
 
 // button timing variables
@@ -1078,7 +1076,8 @@ void loop() {
       // 3 sec hold
       hold_type = 3;
       ANIMATION_LEN = MESSAGE_LEN;
-
+      Serial.println("message");
+      
     } else if (pressTime > 2000) {
       // 2 sec hold
       ANIMATION_LEN = BEATING_HEART_LEN;
