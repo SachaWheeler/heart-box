@@ -1222,7 +1222,7 @@ void loop() {
     }
     animFrame = 0;
 
-  } else {
+  } else { // not pressed
     if (firsttime == 0) {
       firsttime = 1;
     }
