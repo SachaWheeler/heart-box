@@ -12,6 +12,7 @@
 LedControl display = LedControl(12, 11, 10, 1);
 const int buttonPin = 5;
 
+// heart outline
 const byte OUTLINE[][8] = {
      { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000010, B00000000
   }, { B00000000, B00000000, B00000000, B00000000, B00000000, B00000010, B00000010, B00000000
@@ -42,10 +43,23 @@ const byte OUTLINE[][8] = {
 };
 const int OUTLINE_LEN = sizeof(OUTLINE) / 8;
 const int OUTLINE_TYPE = 0;
-const byte OUTLINE_SPLASH[8] = {
-  B00000001, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000
-};
+const byte OUTLINE_SPLASH[8] = { B00000001, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
 
+// explosion
+const byte EXPLOSION[][8] = {
+     { B00000000, B00000000, B00000000, B00011000, B00011000, B00000000, B00000000, B00000000
+  }, { B00000000, B00000000, B00011000, B00111100, B00111100, B00011000, B00000000, B00000000
+  }, { B00000000, B00001000, B00011000, B01111100, B00111110, B00011000, B00010000, B00000000
+  }, { B00001000, B01001010, B00111100, B11111100, B00111111, B00111100, B01010010, B00010000
+  }, { B10011011, B11001010, B00111100, B11100101, B10100111, B00111100, B01010011, B11011001
+  }, { B10111011, B11111110, B01000011, B11000011, B11000011, B11000010, B01111111, B11011101
+  }, { B11111111, B11100111, B11000011, B10000001, B10000001, B11000011, B11100111, B11111111
+  }, { B01100110, B10000001, B10000001, B00000000, B00000000, B10000001, B10000001, B01100110
+  }
+};
+const int EXPLOSION_LEN = sizeof(EXPLOSION) / 8;
+const int EXPLOSION_TYPE = 1;
+const byte EXPLOSION_SPLASH[8] = { B00000001, B00000001, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
 
 const byte HEART[][8] = {
      { B00000000, B00000000, B00000000, B00110000, B00110000, B00000000, B00000000, B00000000
@@ -62,29 +76,10 @@ const byte HEART[][8] = {
   }, { B00000000, B00000000, B00110000, B01111000, B01111000, B00110000, B00000000, B00000000
   }
 };
+
 const int HEART_LEN = sizeof(HEART) / 8;
 const int HEART_TYPE = 2;
-const byte HEART_SPLASH[8] = {
-  B00000001, B00000001, B00000001, B00000000, B00000000, B00000000, B00000000, B00000000
-};
-
-// explosion
-const byte EXPLOSION[][8] = {
-     { B00000000, B00000000, B00000000, B00011000, B00011000, B00000000, B00000000, B00000000
-  }, { B00000000, B00000000, B00011000, B00111100, B00111100, B00011000, B00000000, B00000000
-  }, { B00000000, B00001000, B00011000, B01111100, B00111110, B00011000, B00010000, B00000000
-  }, { B00001000, B01001010, B00111100, B11111100, B00111111, B00111100, B01010010, B00010000
-  }, { B10011011, B11001010, B00111100, B11100101, B10100111, B00111100, B01010011, B11011001
-  }, { B10111011, B11111110, B01000011, B11000011, B11000011, B11000010, B01111111, B11011101
-  }, { B11111111, B11100111, B11000011, B10000001, B10000001, B11000011, B11100111, B11111111
-  }, { B01100110, B10000001, B10000001, B00000000, B00000000, B10000001, B10000001, B01100110
-  }
-};
-const int EXPLOSION_LEN = sizeof(EXPLOSION) / 8;
-const int EXPLOSION_TYPE = 1;
-const byte EXPLOSION_SPLASH[8] = {
-  B00000001, B00000001, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000
-};
+const byte HEART_SPLASH[8] = { B00000001, B00000001, B00000001, B00000000, B00000000, B00000000, B00000000, B00000000 };
 
 const byte MESSAGE[][8] = {
      { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00001110,
@@ -194,9 +189,7 @@ const byte MESSAGE[][8] = {
 };
 const int MESSAGE_LEN = sizeof(MESSAGE) / 8;
 const int MESSAGE_TYPE = 3;
-const byte MESSAGE_SPLASH[8] = {
-  B00000001, B00000001, B00000001, B00000001, B00000000, B00000000, B00000000, B00000000
-};
+const byte MESSAGE_SPLASH[8] = { B00000001, B00000001, B00000001, B00000001, B00000000, B00000000, B00000000, B00000000 };
 
 void setup() {
   Serial.begin(9600);
@@ -206,7 +199,7 @@ void setup() {
 
   display.clearDisplay(0);
   display.shutdown(0, false);
-  display.setIntensity(0, 10);
+  display.setIntensity(0, 10); // test this
 
 }
 
@@ -219,15 +212,15 @@ void displayImage(const byte* image) {
 // animation variables
 int animFrame = 0;
 unsigned long animTime = 0;     // the last time we animated
-unsigned long outlineDelay = 200;
-unsigned long heartDelay = 300;
-unsigned long explosionDelay = 260;
-unsigned long messageDelay = 110;
+unsigned long OUTLINE_DELAY = 200;
+unsigned long HEART_DELAY = 300;
+unsigned long EXPLOSION_DELAY = 260;
+unsigned long MESSAGE_DELAY = 110;
 unsigned long millisecs = 0;    // a millis() time-slice
 
 // starting defaults
-unsigned long animDelay = outlineDelay;  // milliseconds between animation calls
-int ANIMATION_LEN = OUTLINE_LEN; // starting position
+unsigned long anmation_delay = OUTLINE_DELAY;  // milliseconds between animation calls
+int anmation_len = OUTLINE_LEN; // starting position
 int hold_type = OUTLINE_TYPE;
 int repeat = 0;
 
@@ -255,8 +248,8 @@ void loop() {
       displayImage(MESSAGE_SPLASH);
       hold_type = MESSAGE_TYPE; // 3;
       repeat = 0;
-      ANIMATION_LEN = MESSAGE_LEN;
-      animDelay = messageDelay;
+      anmation_len = MESSAGE_LEN;
+      anmation_delay = MESSAGE_DELAY;
       Serial.println("message");
 
     } else if (pressTime > 1500) {
@@ -264,8 +257,8 @@ void loop() {
       displayImage(HEART_SPLASH);
       hold_type = HEART_TYPE; // 2;
       // repeat = 3;
-      ANIMATION_LEN = HEART_LEN;
-      animDelay = heartDelay;
+      anmation_len = HEART_LEN;
+      anmation_delay = HEART_DELAY;
       Serial.println("beating heart");
 
     } else if (pressTime > 500) {
@@ -273,8 +266,8 @@ void loop() {
       displayImage(EXPLOSION_SPLASH);
       hold_type = EXPLOSION_TYPE; // 1;
       repeat = 0;
-      ANIMATION_LEN = EXPLOSION_LEN;
-      animDelay = explosionDelay;
+      anmation_len = EXPLOSION_LEN;
+      anmation_delay = EXPLOSION_DELAY;
       Serial.println("explosion");
 
     } else {
@@ -282,8 +275,8 @@ void loop() {
       displayImage(OUTLINE_SPLASH);
       hold_type = OUTLINE_TYPE; // 0;
       repeat = 0;
-      ANIMATION_LEN = OUTLINE_LEN;
-      animDelay = outlineDelay;
+      anmation_len = OUTLINE_LEN;
+      anmation_delay = OUTLINE_DELAY;
       Serial.println("heart outline");
     }
     animFrame = 0;
@@ -292,7 +285,7 @@ void loop() {
     if (firsttime == 0)
       firsttime = 1;
 
-    if ( animTime + animDelay < millisecs ) {
+    if ( animTime + anmation_delay < millisecs ) {
       animTime = millisecs;
 
       // animate
@@ -309,7 +302,7 @@ void loop() {
         displayImage(MESSAGE[animFrame]);
 
       }
-      if (++animFrame >= ANIMATION_LEN) {
+      if (++animFrame >= anmation_len) {
         // repeat, or not
         // if (--repeat > 0)
         animFrame = 0;
