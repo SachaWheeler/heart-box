@@ -37,10 +37,23 @@ const byte OUTLINE[][8] = {
   }, { B00011100, B00111110, B01100110, B11000100, B11000100, B01100110, B00111110, B00011100
   }, { B00011100, B00111110, B01111110, B11100100, B11100100, B01111110, B00111110, B00011100
   }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
-  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
   }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
   }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
   }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
+  }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
+  }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
+  }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+  }, { B00011100, B00100010, B01000010, B10000100, B10000100, B01000010, B00100010, B00011100
+
+  }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
+  }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
   }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
   }, { B00011100, B00111110, B01111110, B11111100, B11111100, B01111110, B00111110, B00011100
   }, { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000
@@ -219,16 +232,16 @@ void displayImage(const byte* image) {
 // animation variables
 int animFrame = 0;
 unsigned long animTime = 0;     // the last time we animated
-unsigned long OUTLINE_DELAY = 200;
-unsigned long HEART_DELAY = 300;
+unsigned long OUTLINE_DELAY = 100;
+unsigned long HEART_DELAY = 260;
 unsigned long EXPLOSION_DELAY = 260;
 unsigned long MESSAGE_DELAY = 100;
 unsigned long millisecs = 0;    // a millis() time-slice
 unsigned long button_interval = 750;
 
 // starting defaults
-unsigned long anmation_delay = HEART_DELAY;  // milliseconds between animation calls
-int anmation_len = HEART_LEN; // starting position
+unsigned long animation_delay = HEART_DELAY;  // milliseconds between animation calls
+int animation_len = HEART_LEN; // starting position
 int hold_type = HEART_TYPE;
 int limited = 1;
 int repeat_count = 2;
@@ -259,8 +272,8 @@ void loop() {
       hold_type = MESSAGE_TYPE; // 3;
       limited = 1;
       repeat_count = 1;
-      anmation_len = MESSAGE_LEN;
-      anmation_delay = MESSAGE_DELAY;
+      animation_len = MESSAGE_LEN;
+      animation_delay = MESSAGE_DELAY;
       Serial.println("message");
 
     } else if (pressTime > button_interval * HEART_TYPE) {
@@ -269,8 +282,8 @@ void loop() {
       hold_type = HEART_TYPE; // 2;
       limited = 1;
       repeat_count = 3;
-      anmation_len = HEART_LEN;
-      anmation_delay = HEART_DELAY;
+      animation_len = HEART_LEN;
+      animation_delay = HEART_DELAY;
       Serial.println("beating heart");
 
     } else if (pressTime > button_interval * EXPLOSION_TYPE) {
@@ -279,18 +292,18 @@ void loop() {
       hold_type = EXPLOSION_TYPE; // 1;
       limited = 1;
       repeat_count = 2;
-      anmation_len = EXPLOSION_LEN;
-      anmation_delay = EXPLOSION_DELAY;
+      animation_len = EXPLOSION_LEN;
+      animation_delay = EXPLOSION_DELAY;
       Serial.println("explosion");
 
     } else {
       // quick press: outline
-      if (hold_type != OUTLINE_TYPE) displayImage(OUTLINE_SPLASH);
+      displayImage(OUTLINE_SPLASH);
       hold_type = OUTLINE_TYPE; // 0;
       limited = 1;
       repeat_count = 1;
-      anmation_len = OUTLINE_LEN;
-      anmation_delay = OUTLINE_DELAY;
+      animation_len = OUTLINE_LEN;
+      animation_delay = OUTLINE_DELAY;
       Serial.println("heart outline");
     }
     animFrame = 0;
@@ -299,7 +312,7 @@ void loop() {
     if (firsttime == 0)
       firsttime = 1;
 
-    if ( animTime + anmation_delay < millisecs ) {
+    if ( animTime + animation_delay < millisecs ) {
       animTime = millisecs;
 
       // animate
@@ -324,7 +337,7 @@ void loop() {
         blank = 0;
 
       }
-      if (++animFrame >= anmation_len) {
+      if (++animFrame >= animation_len) {
         // repeat, or not
         if (limited > 0 and repeat_count > 0){
             repeat_count--;
